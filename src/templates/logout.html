@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% url 'home' as home_url %}
+
+{% block content %}
+    <div>
+        You have successfully logged out!
+    </div>
+    <a href="{{ home_url }}">Return Home</a>
+{% endblock %}

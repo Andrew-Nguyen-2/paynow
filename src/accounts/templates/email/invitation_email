@@ -1,0 +1,16 @@
+{% autoescape off %}
+Hello {{ email }},
+
+You've been invited to join {{ organization }} on PayNow.
+
+Follow the link below to create your account.
+
+http://{{ domain }}{% url 'register' name=organization uidb64=oid token=token %}
+
+If you are not a member of {{ organization }}, please disregard this email.
+
+Sincerely,
+
+PayNow
+
+{% endautoescape %}

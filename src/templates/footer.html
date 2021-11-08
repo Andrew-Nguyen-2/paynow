@@ -1,0 +1,29 @@
+<html>
+{% url 'about' as about_url %}
+
+<head>
+	<style>
+		#footer {
+			position: relative;
+			padding: 10px 10px 0 10px;
+			bottom: 0;
+			width: 100%;
+			/* Height of the footer*/
+			height: 40px;
+			background: grey;
+		}
+	</style>
+
+    <head>
+
+		<body>
+			<div style="text-align: right">
+				<div id="container">
+					<div id="footer">
+						<a class="grey-text text-lighten-4 right" href="{{ about_url }}" style="text-align: right">About</a>
+					</div>
+				</div>
+			</div>
+		</body>
+<html>
+
