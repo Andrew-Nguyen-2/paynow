@@ -1,2 +1,1 @@
 # paynow
-# paynow
