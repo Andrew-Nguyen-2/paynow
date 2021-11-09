@@ -22,8 +22,11 @@ def account_home_view(request):
 
 def account_budget_view(request):
     user = request.user
+    org = Account.objects.get(name=user.organization_name)
+    label = ['Expected Amount', 'Collected Amount']
+    data = [org.expected_amount, org.collected_amount]
     if user.is_owner:
-        return render(request, "owner/budget.html", {})
+        return render(request, "owner/budget.html", {'organization': org, 'data': data, 'labels': label})
     else:
         return render(request, "member/member_budget.html", {})
 
@@ -66,6 +69,7 @@ def member_payment_view(request):
 
 def send_invoice_view(request):
     user = request.user
+    org = Account.objects.get(name=user.organization_name)
     query_results = OrgUser.objects.exclude(username=user.username).filter(organization_name=user.organization_name)
     choices = [(mem.username, str(mem.username)) for mem in query_results]
     if request.method == "POST":
@@ -82,6 +86,8 @@ def send_invoice_view(request):
                 history = InvoiceHistory(
                     username=name, description=description,
                     invoice_amount=invoice_amount, organization_name=user.organization_name)
+                org.expected_amount = org.expected_amount + invoice_amount
+                org.save()
                 history.save()
             return redirect("../members_list")
         else:
