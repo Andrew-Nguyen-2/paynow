@@ -68,9 +68,8 @@ def send_invoice_view(request):
     query_results = OrgUser.objects.exclude(username=user.username).filter(organization_name=user.organization_name)
     choices = [(mem.username, str(mem.username)) for mem in query_results]
     if request.method == "POST":
-        form = SendInvoiceForm(request.POST, choices)
+        form = SendInvoiceForm(choices, request.POST)
         if form.is_valid():
-            form.save()
             return render(
                 request, 'owner/member_list.html',
                 {'organization': user.organization_name, 'members': query_results, 'form': form}
@@ -81,12 +80,13 @@ def send_invoice_view(request):
                 request, 'owner/invoice/send_invoice_form.html',
                 {'organization': user.organization_name, 'members': query_results, 'form': form}
             )
-    form = SendInvoiceForm(request.POST, choices)
+    form = SendInvoiceForm(choices, request.POST)
     return render(
         request,
         'owner/invoice/send_invoice_form.html',
         {'organization': user.organization_name, 'members': query_results, 'form': form}
     )
+
 
 
 def organization_register(request):

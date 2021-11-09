@@ -108,16 +108,16 @@ class NewUserForm(UserCreationForm):
 
 class SendInvoiceForm(forms.Form):
 
-    CHOICES = (
-        ('-', '---------'),
-        ('-', '---------')
+    member_list = forms.MultipleChoiceField(
+        label=_("Member List"),
+        help_text="Press and Hold Command (mac) / Control (windows) to Select Multiple Members"
     )
 
-    member_list = forms.MultipleChoiceField(
-        choices=CHOICES,
-        widget=forms.SelectMultiple,
-        label=_("Member List"),
-        help_text="Press and Hold Shift to Select Multiple Members"
+    amount = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        label=_('Amount $'),
+        widget=forms.TextInput(attrs={'placeholder': '$0.00'})
     )
 
     description = forms.CharField(
@@ -126,18 +126,10 @@ class SendInvoiceForm(forms.Form):
         label=_("Description of Invoice"),
     )
 
-    def __init__(self, request, member_choices=None, *args, **kwargs):
+    def __init__(self, member_choices=None, *args, **kwargs):
         super(SendInvoiceForm, self).__init__(*args, **kwargs)
         if member_choices is not None:
             self.fields['member_list'].choices = member_choices
-
-
-    class Meta:
-        model = OrgUser
-        fields = ['amount_owed']
-        exclude = {
-            'organization_id', 'organization_name', 'is_owner', 'is_member', 'amount_owed', 'amount_paid'
-        }
 
 
 class UserInviteForm(forms.Form):

@@ -1,7 +1,8 @@
 {% extends 'admin_base.html' %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div style="text-align: center">
+
+<div style="text-align: center" xmlns="http://www.w3.org/1999/html">
     <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
     font-style: italic; color: #0d8dcb; font-weight: 900">
         Send Invoice to All Members
@@ -10,7 +11,7 @@
 <div style="max-width: 950px; margin: 0 auto">
     <form method="post">
         {% csrf_token %}
-        {{ form| crispy }}
+        {{ form | crispy }}
         <button style="background-color:#F4EB16; color:blue" class="btn btn-outline-info" type="submit">Apply</button>
     </form>
 </div>
