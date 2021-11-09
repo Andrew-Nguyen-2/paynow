@@ -32,6 +32,16 @@ class OrgUser(AbstractUser):
         verbose_name = "Organization Member"
 
 
+class InvoiceHistory(models.Model):
+    username = models.CharField(max_length=25)
+    description = models.CharField(max_length=500)
+    invoice_amount = models.DecimalField(verbose_name='Amount $', max_digits=8, decimal_places=2)
+    date_sent = models.DateTimeField(_('Date Sent'), default=timezone.now)
+
+    class Meta:
+        verbose_name = "Invoice History"
+
+
 class AccountUser(AbstractOrganizationUser):
     pass
 

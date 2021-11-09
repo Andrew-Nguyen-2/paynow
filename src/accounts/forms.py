@@ -1,12 +1,12 @@
 from django import forms
-from .models import Account, AccountUser, OrgUser
+from .models import Account, AccountUser, OrgUser, InvoiceHistory
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.sites.models import Site
 from organizations.backends import invitation_backend
 from organizations.backends.forms import UserRegistrationForm
 from django.conf import settings
-
+from django.utils import timezone
 
 
 class NewOrgForm(forms.ModelForm):
@@ -130,6 +130,11 @@ class SendInvoiceForm(forms.Form):
         super(SendInvoiceForm, self).__init__(*args, **kwargs)
         if member_choices is not None:
             self.fields['member_list'].choices = member_choices
+
+    class Meta:
+        model = InvoiceHistory
+        fields = ("member_list", "invoice_amount", "description")
+        exclude = ['date_sent']
 
 
 class UserInviteForm(forms.Form):

@@ -7,8 +7,7 @@ from django.http import HttpResponse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from .models import Account, OrgUser
-from django.views.generic.edit import UpdateView
+from .models import Account, OrgUser, InvoiceHistory
 
 # Create your views here.
 
@@ -34,7 +33,8 @@ def account_history_view(request):
     if user.is_owner:
         return render(request, "owner/history.html", {})
     else:
-        return render(request, "member/member_history.html", {})
+        query_results = InvoiceHistory.objects.filter(username=user.username)
+        return render(request, "member/member_history.html", {'history': query_results})
 
 
 def account_settings_view(request):
@@ -60,7 +60,7 @@ def member_list(request):
 
 
 def member_payment_view(request):
-    return render(request, 'payment.html', {})
+    return render(request, 'member/payment.html', {})
 
 
 def send_invoice_view(request):
@@ -70,10 +70,17 @@ def send_invoice_view(request):
     if request.method == "POST":
         form = SendInvoiceForm(choices, request.POST)
         if form.is_valid():
-            return render(
-                request, 'owner/member_list.html',
-                {'organization': user.organization_name, 'members': query_results, 'form': form}
-            )
+            selected_members = form.cleaned_data['member_list']
+            invoice_amount = form.cleaned_data['amount']
+            for memb in selected_members:
+                member_user = OrgUser.objects.get(username=memb)
+                member_user.amount_owed = member_user.amount_owed + invoice_amount
+                member_user.save()
+                name = memb
+                description = form.cleaned_data['description']
+                history = InvoiceHistory(username=name, description=description, invoice_amount=invoice_amount)
+                history.save()
+            return redirect("../members_list")
         else:
             messages.error(request, "Unsuccessfully Sent Invoice")
             return render(
@@ -86,7 +93,6 @@ def send_invoice_view(request):
         'owner/invoice/send_invoice_form.html',
         {'organization': user.organization_name, 'members': query_results, 'form': form}
     )
-
 
 
 def organization_register(request):
