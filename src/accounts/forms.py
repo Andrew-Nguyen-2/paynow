@@ -133,7 +133,7 @@ class SendInvoiceForm(forms.Form):
 
     class Meta:
         model = InvoiceHistory
-        fields = ("member_list", "invoice_amount", "description")
+        fields = ("member_list", "invoice_amount", "description", "organization_name")
         exclude = ['date_sent']
 
 

@@ -31,10 +31,10 @@ class AccountAdmin(admin.ModelAdmin):
 
 class InvoiceHistoryAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('User Information', {'fields': ['username']}),
+        ('User Information', {'fields': ['username', 'organization_name']}),
         ('Invoice Information', {'fields': ['description', 'date_sent', 'invoice_amount']})
     ]
-    readonly_fields = ('username', 'description', 'date_sent', 'invoice_amount')
+    readonly_fields = ('username', 'organization_name', 'description', 'date_sent', 'invoice_amount')
 
 
 admin.site.unregister(Organization)

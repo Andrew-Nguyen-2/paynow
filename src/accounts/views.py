@@ -31,7 +31,8 @@ def account_budget_view(request):
 def account_history_view(request):
     user = request.user
     if user.is_owner:
-        return render(request, "owner/history.html", {})
+        query_results = InvoiceHistory.objects.filter(organization_name=user.organization_name)
+        return render(request, "owner/history.html", {'history': query_results})
     else:
         query_results = InvoiceHistory.objects.filter(username=user.username)
         return render(request, "member/member_history.html", {'history': query_results})
@@ -78,7 +79,9 @@ def send_invoice_view(request):
                 member_user.save()
                 name = memb
                 description = form.cleaned_data['description']
-                history = InvoiceHistory(username=name, description=description, invoice_amount=invoice_amount)
+                history = InvoiceHistory(
+                    username=name, description=description,
+                    invoice_amount=invoice_amount, organization_name=user.organization_name)
                 history.save()
             return redirect("../members_list")
         else:

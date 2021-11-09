@@ -34,6 +34,7 @@ class OrgUser(AbstractUser):
 
 class InvoiceHistory(models.Model):
     username = models.CharField(max_length=25)
+    organization_name = models.CharField(max_length=75, default="NO ORG")
     description = models.CharField(max_length=500)
     invoice_amount = models.DecimalField(verbose_name='Amount $', max_digits=8, decimal_places=2)
     date_sent = models.DateTimeField(_('Date Sent'), default=timezone.now)
