@@ -7,39 +7,41 @@
         Budget
     </p>
 </div>
-<div style="text-align: center">
-    <h5>Expected Amount: ${{ organization.expected_amount }}</h5>
-    <h5>Collected Amount: ${{ organization.collected_amount }}</h5>
-</div>
-<br>
-<br>
-<div id="container" style="width: 75%">
-    <canvas id="pie-chart"></canvas>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-  <script>
-    var config = {
-      type: 'pie',
-      data: {
-        datasets: [{
-          data: [{{ organization.expected_amount }}, {{ organization.collected_amount }}],
-          backgroundColor: [
-            '#ff0000', '#228B22'
-          ],
-          label: 'Amount'
-        }],
-        labels: ['Expected Amount', 'Collected Amount']
-      },
-      options: {
-        responsive: true
-      }
-    };
+<div class="row justify-content-center">
+    <div>
+        <h5>Expected Amount: ${{ organization.expected_amount }}</h5>
+        <h5>Collected Amount: ${{ organization.collected_amount }}</h5>
+    </div>
+    <br>
+    <br>
+    <div id="container" style="width: 75%">
+        <canvas id="pie-chart"></canvas>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+      <script>
+        var config = {
+          type: 'pie',
+          data: {
+            datasets: [{
+              data: [{{ organization.expected_amount }}, {{ organization.collected_amount }}],
+              backgroundColor: [
+                '#ff0000', '#228B22'
+              ],
+              label: 'Amount'
+            }],
+            labels: ['Expected Amount', 'Collected Amount']
+          },
+          options: {
+            responsive: true
+          }
+        };
 
-    window.onload = function() {
-      var ctx = document.getElementById('pie-chart').getContext('2d');
-      window.myPie = new Chart(ctx, config);
-    };
-  </script>
+        window.onload = function() {
+          var ctx = document.getElementById('pie-chart').getContext('2d');
+          window.myPie = new Chart(ctx, config);
+        };
+      </script>
+</div>
 <br>
 <br>
 <br>

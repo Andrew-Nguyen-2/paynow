@@ -66,7 +66,6 @@ urlpatterns = [
     path('accounts/make_payment/', make_a_payment, name='make_payment'),
 
     # payment urls
-    path('payments/', include('payments.urls')),
 
     # password reset urls
     path('password_reset/done/',
