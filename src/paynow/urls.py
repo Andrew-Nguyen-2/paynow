@@ -65,6 +65,9 @@ urlpatterns = [
     path('accounts/send_invoice/', send_invoice_view, name='send_invoice'),
     path('accounts/make_payment/', make_a_payment, name='make_payment'),
 
+    # payment urls
+    path('payments/', include('payments.urls')),
+
     # password reset urls
     path('password_reset/done/',
          auth_views.PasswordResetDoneView.as_view(template_name='password/password_reset_done.html'),

@@ -146,3 +146,4 @@ EMAIL_PORT = 587
 ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
 # AUTH_USER_MODEL = 'auth.User'
 AUTH_USER_MODEL = 'accounts.OrgUser'
+

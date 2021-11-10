@@ -71,7 +71,8 @@ def member_payment_view(request):
 
 def make_a_payment(request):
     user = request.user
-    return render(request, 'member/make_payment.html', {})
+    amount_owed = user.amount_owed
+    return render(request, 'member/make_payment.html', {'amount': amount_owed})
 
 
 def send_invoice_view(request):
