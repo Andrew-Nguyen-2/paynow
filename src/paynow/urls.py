@@ -39,7 +39,8 @@ from accounts.views import (
     user_invite_register,
     member_payment_view,
     member_list,
-    send_invoice_view
+    send_invoice_view,
+    make_a_payment
 )
 
 
@@ -62,6 +63,7 @@ urlpatterns = [
     path('accounts/about/', account_footer_view, name='account_about'),
     path('accounts/members_list/', member_list, name='member_list'),
     path('accounts/send_invoice/', send_invoice_view, name='send_invoice'),
+    path('accounts/make_payment/', make_a_payment, name='make_payment'),
 
     # password reset urls
     path('password_reset/done/',

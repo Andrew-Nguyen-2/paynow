@@ -8,6 +8,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from .models import Account, OrgUser, InvoiceHistory
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -23,12 +24,10 @@ def account_home_view(request):
 def account_budget_view(request):
     user = request.user
     org = Account.objects.get(name=user.organization_name)
-    label = ['Expected Amount', 'Collected Amount']
-    data = [org.expected_amount, org.collected_amount]
     if user.is_owner:
-        return render(request, "owner/budget.html", {'organization': org, 'data': data, 'labels': label})
+        return render(request, "owner/budget.html", {'organization': org})
     else:
-        return render(request, "member/member_budget.html", {})
+        return render(request, "member/member_budget.html", {'organization': org})
 
 
 def account_history_view(request):
@@ -41,6 +40,7 @@ def account_history_view(request):
         return render(request, "member/member_history.html", {'history': query_results})
 
 
+@login_required
 def account_settings_view(request):
     user = request.user
     if user.is_owner:
@@ -64,7 +64,14 @@ def member_list(request):
 
 
 def member_payment_view(request):
-    return render(request, 'member/payment.html', {})
+    user = request.user
+    amount_owed = user.amount_owed
+    return render(request, 'member/payment.html', {'amount': amount_owed})
+
+
+def make_a_payment(request):
+    user = request.user
+    return render(request, 'member/make_payment.html', {})
 
 
 def send_invoice_view(request):

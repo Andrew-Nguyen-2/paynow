@@ -1,9 +1,9 @@
 {% extends 'member_base.html' %}
 {% block content %}
-<div style="margin: 25px 625px; width: 100%">
+<div style="text-align: center">
     <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
     font-style: italic; color: #0d8dcb; font-weight: 900">
-        Payment
+        Make Payment
     </p>
 </div>
 <div class="card text-white bg-secondary mb-3 text-center" style="width: 18rem; margin: auto">
@@ -11,7 +11,10 @@
   <div class="card-body">
     <h6 class="card-title">Total Outstanding Balance</h6>
     <p class="card-text">${{ amount }}</p>
-    <a href="../make_payment/" class="btn btn-primary">Make a Payment</a>
+    <a href="#" class="btn btn-primary">Pay By Credit / Debit Card</a>
+      <br>
+      <br>
+      <a href="#" class="btn btn-primary">Pay By Bank Account</a>
   </div>
 </div>
 <br>
