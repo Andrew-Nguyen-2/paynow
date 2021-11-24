@@ -27,6 +27,7 @@ class OrgUser(AbstractUser):
     is_member = models.BooleanField(default=False)
     amount_owed = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
     amount_paid = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    has_stripe_account = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Organization Member"

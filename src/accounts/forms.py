@@ -50,7 +50,11 @@ class NewUserAdminForm(UserCreationForm):
     class Meta:
         model = OrgUser
         fields = ("username", "email", "password1", "password2")
-        exclude = ['organization_id', 'organization_name', 'is_owner', 'is_member', 'amount_owed', 'amount_paid']
+        exclude = ['organization_id',
+                   'organization_name',
+                   'is_owner', 'is_member',
+                   'amount_owed', 'amount_paid',
+                   'has_stripe_account']
 
 
     def save(self, commit=True):
@@ -94,7 +98,9 @@ class NewUserForm(UserCreationForm):
         model = OrgUser
         fields = ("username", "first_name", "last_name", "email", "password1", "password2")
         exclude = [
-            'organization_id', 'organization_name', 'is_owner', 'is_member', 'amount_owed', 'amount_paid'
+            'organization_id', 'organization_name',
+            'is_owner', 'is_member', 'amount_owed', 'amount_paid',
+            'has_stripe_account'
         ]
 
     def save(self, commit=True):

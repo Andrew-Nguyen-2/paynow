@@ -147,3 +147,9 @@ ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
 # AUTH_USER_MODEL = 'auth.User'
 AUTH_USER_MODEL = 'accounts.OrgUser'
 
+# Stripe
+STRIPE_CONNECT_CLIENT_ID = 'ca_Kajv2yDSvGSR2tnnuaedwiGnRZKp0LqL'
+STRIPE_PUBLIC_KEY = \
+    "pk_test_51Jv695K2Lmw2gpPZocxZoNag8Z6pv9JU8VoQv7knF7gLxDfWp6n6CnCboOOVnLCVyXn8XwVSnYi9W9jM03EXmcla00CtSt0JBk"
+STRIPE_SECRET_KEY = \
+    "sk_test_51Jv695K2Lmw2gpPZOH9NhVSgKPXmIk1VxM3uk7Adp7g6fmPnlrepDybV9WE8lnc8S2vdXuMAdDTK8qpMITqm7kqF00prqvFU24"

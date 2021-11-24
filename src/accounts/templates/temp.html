@@ -1,31 +1,26 @@
-{% extends 'admin_base.html' %}
+{% extends 'member_base.html' %}
 {% block content %}
+<br>
+
 <div style="text-align: center">
     <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
     font-style: italic; color: #0d8dcb; font-weight: 900">
-        All Members of {{ organization }}
+        Make Payment
     </p>
 </div>
-<table class="table table-striped table-bordered">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Username</th>
-        <th scope="col">Email</th>
-        <th scope="col">Amount Owed</th>
-        <th scope="col">Amount Paid</th>
-    </tr>
-    </thead>
-    <tbody>
-        {{% for member in members %}}
-        <tr>
-            <th scope="row">{{ forloop.counter }}</th>
-            <td>{{ member.username }}</td>
-            <td>{{ member.email }}</td>
-            <td>{{ member.amount_owed }}</td>
-            <td>{{ member.amount_paid }}</td>
-        </tr>
-        {{% endfor %}}
-    </tbody>
-</table>
+<br>
+<div class="card text-white bg-secondary mb-3 text-center" style="width: 18rem; margin: auto">
+    <div class="card-header">Amount Owed</div>
+  <div class="card-body">
+    <h6 class="card-title">Total Outstanding Balance</h6>
+    <p class="card-text">$ {{ amount }}</p>
+    <a href="#" class="btn btn-primary">Pay By Credit / Debit Card</a>
+      <br>
+      <br>
+      <a href="#" class="btn btn-primary">Pay By Bank Account</a>
+  </div>
+</div>
+<br>
+<br>
+<br>
 {% endblock %}

@@ -9,6 +9,12 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from .models import Account, OrgUser, InvoiceHistory
 from django.contrib.auth.decorators import login_required
+import stripe
+from django.conf import settings
+
+stripe.api_key = \
+    "sk_test_51Jv695K2Lmw2gpPZOH9NhVSgKPXmIk1VxM3uk7Adp7g6fmPnlrepDybV9WE8lnc8S2vdXuMAdDTK8qpMITqm7kqF00prqvFU24"
+
 
 # Create your views here.
 
@@ -16,9 +22,25 @@ from django.contrib.auth.decorators import login_required
 def account_home_view(request):
     user = request.user
     if user.is_owner:
+        if not user.has_stripe_account:
+            new_account = stripe.Account.create(type="standard", email=user.email)
+            link = stripe.AccountLink.create(
+                account=new_account.id,
+                refresh_url="HTTP://127.0.0.1:8000",
+                return_url="HTTP://127.0.0.1:8000/accounts/stripe_account_success/",
+                type="account_onboarding",
+            )
+            return render(request, "owner/admin_home.html", {'link': link.url})
         return render(request, "owner/admin_home.html", {})
     else:
         return render(request, "member/member_home.html", {})
+
+
+def stripe_success(request):
+    user = request.user
+    user.has_stripe_account = True
+    user.save()
+    return render(request, "owner/stripe_account_success.html", {})
 
 
 def account_budget_view(request):
@@ -139,6 +161,17 @@ def organization_register(request):
         'organization_register.html',
         context={"organization_form": organization_form, "user_form": user_form}
     )
+
+
+def create_stripe_account(request):
+    user_username = request.user.username
+    link = stripe.AccountLink.create(
+        account=user_username,
+        refresh_url="http://127.0.0.1:8000/",
+        return_url="http://127.0.0.1:8000/accounts/login/",
+        type="account_onboarding",
+    )
+    return link["url"]
 
 
 def invite_new_users(request):

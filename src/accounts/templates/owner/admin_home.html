@@ -1,13 +1,38 @@
 {% extends 'admin_base.html' %}
 {% block content %}
-<div style="margin: 25px 545px; width: 100%">
+<br>
+<br>
+<div style="text-align: center">
     <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
     font-style: italic; color: #0d8dcb; font-weight: 900">
         Admin Home Page
     </p>
 </div>
-<div style="width: 100%; margin: 150px 625px">
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div style="text-align: center">
     <h4>Hello, {{ user.username }}</h4>
 </div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+
+{% if not user.has_stripe_account %}
+    <div style="text-align: center">
+        <h5>
+            <a href="{{ link }}">Please Register Your Stripe Account!</a>
+        </h5>
+    </div>
+
+{% endif %}
+
 {% endblock %}
 

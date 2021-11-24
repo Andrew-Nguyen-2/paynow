@@ -15,15 +15,17 @@ class OrgUserAdmin(admin.ModelAdmin):
          {'fields': ['first_name', 'last_name', 'email', 'username', 'password', 'amount_owed', 'amount_paid']}
          ),
         ('Organization Information', {'fields': ['organization_id', 'organization_name']}),
-        ('User Information', {'fields': ['date_joined', 'last_login', 'is_owner', 'is_member']}),
+        ('User Information', {'fields': ['date_joined', 'last_login', 'is_owner', 'is_member', 'has_stripe_account']}),
         ('Permissions', {'fields': ['is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions']})
     ]
     filter_horizontal = ('groups', 'user_permissions',)
+    readonly_fields = ('has_stripe_account',)
 
 
 class AccountAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Organization Information', {'fields': ['name', 'slug', 'date_joined', 'collected_amount', 'expected_amount']}),
+        ('Organization Information',
+         {'fields': ['name', 'slug', 'date_joined', 'collected_amount', 'expected_amount']}),
         ('Permissions', {'fields': ['is_active']}),
     ]
     readonly_fields = ('id', 'collected_amount', 'expected_amount')

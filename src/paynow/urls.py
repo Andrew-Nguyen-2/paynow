@@ -40,7 +40,8 @@ from accounts.views import (
     member_payment_view,
     member_list,
     send_invoice_view,
-    make_a_payment
+    make_a_payment,
+    stripe_success
 )
 
 
@@ -65,7 +66,8 @@ urlpatterns = [
     path('accounts/send_invoice/', send_invoice_view, name='send_invoice'),
     path('accounts/make_payment/', make_a_payment, name='make_payment'),
 
-    # payment urls
+    # Stripe urls
+    path('accounts/stripe_account_success/', stripe_success, name='stripe_account_success'),
 
     # password reset urls
     path('password_reset/done/',
