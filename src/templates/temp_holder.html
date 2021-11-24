@@ -1,45 +1,47 @@
-{% extends 'admin_base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-
-<div style="text-align: center">
-    <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
-    font-style: italic; color: #0d8dcb; font-weight: 900">
-        All Members of {{ organization }}
-    </p>
+<div style="margin: 25px 620px">
+    <h1>About</h1>
 </div>
 
-<style>
-    .main-site {
-        padding-top: 5px;
-        width: 95%;
-        max-width: 960px;
-        margin: 0 auto;
-    }
-</style>
+<div class="row">
 
-<button>All Members</button>
-<div class="main-site">
-    <table class="table table-striped table-bordered" style="margin-top: 50px">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Username</th>
-            <th scope="col">Email</th>
-            <th scope="col">Amount Owed</th>
-            <th scope="col">Amount Paid</th>
-        </tr>
-        </thead>
-        <tbody>
-            {% for member in members %}
-            <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ member.username }}</td>
-                <td>{{ member.email }}</td>
-                <td>{{ member.amount_owed }}</td>
-                <td>{{ member.amount_paid }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="col s12 m6">
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+                <span class="card-title" style="font-style: italic; font-family: 'Microsoft Sans Serif',serif">
+                    PayNow
+                </span>
+                <p>
+                   PayNow is an online payment system that allows organizations
+                   to easily pay their membership dues. It can be used by organizations
+                   to handle their monetary needs. It has two different user statuses:
+                   administrator and member. The administrator is able to send
+                   invoices to the members and budget the expected amount as well as
+                   the current amount. The website features visual aids to see how
+                   much of the total is going to different needs of the administrator’s
+                   choosing and how much each member has paid of the total amount owed.
+               </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col s12 m6">
+      <div class="card blue darken-4">
+        <div class="card-content white-text">
+          <span class="card-title">Who I am</span>
+            <p>
+                My name is Andrew Nguyen, and I am a student at Christopher Newport University.
+                I am majoring in Computer Science, and I am creating this website for my capstone
+                project.  I wanted to create this service because many organizations require its
+                members to pay dues which my website streamlines for them and keeps the members
+                informed about the organization's funds.
+            </p>
+        </div>
+      </div>
+    </div>
+
 </div>
+
 {% endblock %}
