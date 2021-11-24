@@ -1,39 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div style="margin: 25px 620px">
+<br>
+<br>
+
+<div style="text-align: center">
     <h1>Features</h1>
 </div>
 
-<div class="row">
+<br>
+<br>
 
-    <div class="col s12 m6">
-      <div class="card blue-grey darken-1">
-        <div class="card-content white-text">
-          <span class="card-title">Admin</span>
-           <ul>
-               <li>Add members to organization</li>
-               <li>Send invoices to members</li>
-               <li>Set budgets for expected total amount and current amount</li>
-               <li>See all member history</li>
-               <li>Create payment plan for members</li>
-           </ul>
+<div class="card-group justify-content-center" style="text-align: center;">
+    <div class="card text-white bg-success mb-3" style="max-width: 35rem;">
+        <div class="card-header">
+            <h2>Admin</h2>
         </div>
-      </div>
+        <div class="card-body">
+            <ul class="card-text" style="text-align: left">
+                <li>Add members to organization</li>
+                <li>Send invoices to members</li>
+                <li>Set budgets for expected total amount and current amount</li>
+                <li>See all member history</li>
+                <li>Create payment plan for members</li>
+            </ul>
+        </div>
     </div>
 
-    <div class="col s12 m6">
-      <div class="card blue darken-4">
-        <div class="card-content white-text">
-          <span class="card-title">Member</span>
-           <ul>
+    <div class="card text-white bg-info mb-3" style="max-width: 35rem;">
+        <div class="card-header">
+            <h2>Member</h2>
+        </div>
+        <div class="card-body">
+            <ul class="card-text" style="text-align: left">
                <li>See the budget for expected total amount and current amount</li>
                <li>See personal history</li>
                <li>Pay invoices by linking bank accounts or by using credit / debit cards</li>
            </ul>
         </div>
-      </div>
     </div>
 
 </div>
+
 {% endblock %}

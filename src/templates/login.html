@@ -2,20 +2,25 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="container">
-        <div style="margin: 25px 460px; width: 100%">
-            <h2>Login</h2>
-        </div>
-        <div style="margin: 25px 300px; width: 50%">
-            <form method="POST">
-                {% csrf_token %}
-                {{ form | crispy }}
-               <button type="submit" name="action" value="Login">
-                   Login
-               </button>
-            </form>
-            <br>
-            <a href="/password_reset">Forgot Password?</a>
-        </div>
+
+<br>
+<br>
+
+<div class="container">
+    <div style="text-align: center">
+        <h2>Login</h2>
     </div>
+    <div style="margin: 25px 300px; width: 50%">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <button type="submit" name="action" value="Login">
+                Login
+            </button>
+        </form>
+        <br>
+        <a href="/password_reset">Forgot Password?</a>
+    </div>
+</div>
+
 {% endblock %}
