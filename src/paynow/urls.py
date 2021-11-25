@@ -26,7 +26,6 @@ from pages.views import (
     about_view,
     login_view,
     logout_request,
-    # register,
     password_reset_request
 )
 
@@ -41,7 +40,10 @@ from accounts.views import (
     member_list,
     send_invoice_view,
     make_a_payment,
-    stripe_success
+    stripe_success,
+    card_payment_success,
+    stripe_credit_debit,
+    StripeIntentView,
 )
 
 
@@ -68,6 +70,9 @@ urlpatterns = [
 
     # Stripe urls
     path('accounts/stripe_account_success/', stripe_success, name='stripe_account_success'),
+    path('accounts/make_payment_card/', stripe_credit_debit, name='make_payment_card'),
+    path('accounts/card_payment_success/', card_payment_success, name='card_payment_success'),
+    path('accounts/create-payment-intent/', StripeIntentView.as_view()),
 
     # password reset urls
     path('password_reset/done/',

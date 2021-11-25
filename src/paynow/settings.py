@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # installed
     'organizations',
     'crispy_forms',
+    'stripe',
     
     # own
     'pages',

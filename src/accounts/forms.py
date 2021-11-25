@@ -54,7 +54,7 @@ class NewUserAdminForm(UserCreationForm):
                    'organization_name',
                    'is_owner', 'is_member',
                    'amount_owed', 'amount_paid',
-                   'has_stripe_account']
+                   'has_stripe_account', 'stripe_account_id']
 
 
     def save(self, commit=True):

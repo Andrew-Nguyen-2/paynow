@@ -1,19 +1,26 @@
+import math
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import NewOrgForm, NewUserAdminForm, UserInviteForm, NewUserForm, SendInvoiceForm
 from django.template.loader import render_to_string
 from django.core.mail import send_mail, BadHeaderError
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from .models import Account, OrgUser, InvoiceHistory
 from django.contrib.auth.decorators import login_required
 import stripe
-from django.conf import settings
+import json
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 stripe.api_key = \
     "sk_test_51Jv695K2Lmw2gpPZOH9NhVSgKPXmIk1VxM3uk7Adp7g6fmPnlrepDybV9WE8lnc8S2vdXuMAdDTK8qpMITqm7kqF00prqvFU24"
+
+pb_key = 'pk_test_51Jv695K2Lmw2gpPZocxZoNag8Z6pv9JU8VoQv7knF7gLxDfWp6n6CnCboOOVnLCVyXn8XwVSnYi9W9jM03EXmcla00CtSt0JBk'
 
 
 # Create your views here.
@@ -24,6 +31,8 @@ def account_home_view(request):
     if user.is_owner:
         if not user.has_stripe_account:
             new_account = stripe.Account.create(type="standard", email=user.email)
+            user.stripe_account_id = new_account.id
+            user.save()
             link = stripe.AccountLink.create(
                 account=new_account.id,
                 refresh_url="HTTP://127.0.0.1:8000",
@@ -95,6 +104,53 @@ def make_a_payment(request):
     user = request.user
     amount_owed = user.amount_owed
     return render(request, 'member/make_payment.html', {'amount': amount_owed})
+
+
+def stripe_credit_debit(request):
+    user = request.user
+    query_results = OrgUser.objects.filter(organization_name=user.organization_name, is_owner=True)
+    payment_intent = stripe.PaymentIntent.create(
+        payment_method_types=['card'],
+        amount=math.trunc(user.amount_owed*100),
+        currency='usd',
+        stripe_account=str(query_results[0].stripe_account_id),
+        metadata={'integration_check': 'accept_a_payment'},
+    )
+    return render(request, 'member/card_payment.html',
+                  {'client_secret': payment_intent['client_secret'],
+                   'amount': user.amount_owed})
+
+
+def calculate_order_amount(items):
+    # Replace this constant with a calculation of the order's amount
+    # Calculate the order total on the server to prevent
+    # people from directly manipulating the amount on the client
+    return 1400
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class StripeIntentView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            items = request.POST.get("items")
+            intent = stripe.PaymentIntent.create(
+                amount=calculate_order_amount(items),
+                currency='usd'
+            )
+            return JsonResponse({'clientSecret': intent['client_secret']})
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+
+
+def card_payment_success(request):
+    user = request.user
+    org = Account.objects.get(name=user.organization_name)
+    org.expected_amount = org.expected_amount + user.amount_owed
+    user.amount_paid = user.amount_paid + user.amount_owed
+    user.amount_owed = 0
+    org.save()
+    user.save()
+    return render(request, 'member/card_payment_success.html', {})
 
 
 def send_invoice_view(request):

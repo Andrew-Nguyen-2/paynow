@@ -12,14 +12,17 @@ class AccountUserAdmin(admin.ModelAdmin):
 class OrgUserAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Personal Information',
-         {'fields': ['first_name', 'last_name', 'email', 'username', 'password', 'amount_owed', 'amount_paid']}
+         {'fields': ['first_name', 'last_name',
+                     'email', 'username', 'password',
+                     'amount_owed', 'amount_paid',
+                     'stripe_account_id']}
          ),
         ('Organization Information', {'fields': ['organization_id', 'organization_name']}),
         ('User Information', {'fields': ['date_joined', 'last_login', 'is_owner', 'is_member', 'has_stripe_account']}),
         ('Permissions', {'fields': ['is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions']})
     ]
     filter_horizontal = ('groups', 'user_permissions',)
-    readonly_fields = ('has_stripe_account',)
+    readonly_fields = ('has_stripe_account', 'stripe_account_id')
 
 
 class AccountAdmin(admin.ModelAdmin):
