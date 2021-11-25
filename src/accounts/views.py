@@ -106,36 +106,36 @@ def make_a_payment(request):
     return render(request, 'member/make_payment.html', {'amount': amount_owed})
 
 
+# def stripe_credit_debit(request):
+#     user = request.user
+#     query_results = OrgUser.objects.filter(organization_name=user.organization_name, is_owner=True)
+#     payment_intent = stripe.PaymentIntent.create(
+#         payment_method_types=['card'],
+#         amount=math.trunc(user.amount_owed*100),
+#         currency='usd',
+#         stripe_account=str(query_results[0].stripe_account_id),
+#         metadata={'integration_check': 'accept_a_payment'},
+#     )
+#     return render(request, 'member/card_payment.html',
+#                   {'client_secret': payment_intent['client_secret'],
+#                    'amount': user.amount_owed})
+
 def stripe_credit_debit(request):
     user = request.user
-    query_results = OrgUser.objects.filter(organization_name=user.organization_name, is_owner=True)
-    payment_intent = stripe.PaymentIntent.create(
-        payment_method_types=['card'],
-        amount=math.trunc(user.amount_owed*100),
-        currency='usd',
-        stripe_account=str(query_results[0].stripe_account_id),
-        metadata={'integration_check': 'accept_a_payment'},
-    )
-    return render(request, 'member/card_payment.html',
-                  {'client_secret': payment_intent['client_secret'],
-                   'amount': user.amount_owed})
-
-
-def calculate_order_amount(items):
-    # Replace this constant with a calculation of the order's amount
-    # Calculate the order total on the server to prevent
-    # people from directly manipulating the amount on the client
-    return 1400
+    return render(request, 'member/card_payment.html', {'amount': user.amount_owed})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class StripeIntentView(View):
     def post(self, request, *args, **kwargs):
+        user = request.user
+        admin = OrgUser.objects.filter(organization_name=user.organization_name, is_owner=True)
+        acc_id = str(admin[0].stripe_account_id)
         try:
-            items = request.POST.get("items")
             intent = stripe.PaymentIntent.create(
-                amount=calculate_order_amount(items),
-                currency='usd'
+                amount=math.trunc(user.amount_owed * 100),
+                currency='usd',
+                stripe_account=acc_id,
             )
             return JsonResponse({'clientSecret': intent['client_secret']})
         except Exception as e:
@@ -145,11 +145,16 @@ class StripeIntentView(View):
 def card_payment_success(request):
     user = request.user
     org = Account.objects.get(name=user.organization_name)
-    org.expected_amount = org.expected_amount + user.amount_owed
+    history = InvoiceHistory(
+        username=user.username, description='Paid',
+        invoice_amount=user.amount_owed, organization_name=user.organization_name
+    )
+    org.collected_amount = org.collected_amount + user.amount_owed
     user.amount_paid = user.amount_paid + user.amount_owed
     user.amount_owed = 0
     org.save()
     user.save()
+    history.save()
     return render(request, 'member/card_payment_success.html', {})
 
 

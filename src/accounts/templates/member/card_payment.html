@@ -210,7 +210,8 @@
     });
     </script>
   </head>
-  {% url 'make_payment' as cancel %}
+  {% url 'payment' as cancel %}
+  {% url 'card_payment_success' as success %}
   <body>
     <main>
       <br>
@@ -245,6 +246,7 @@
       <div id="messages" role="alert" style="display: none;"></div>
 
       <p><a href="{{ cancel }}">Cancel</a></p>
+      <p><a href="{{ success }}">Done</a></p>
 
     </main>
       <script src="https://js.stripe.com/v3/"></script>
