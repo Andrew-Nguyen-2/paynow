@@ -1,5 +1,4 @@
 
-
 <style>
   @import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
 
@@ -98,117 +97,121 @@
     font-size:0.7em;
   }
 </style>
+<script>
+  // Helper for displaying status messages.
+  const addMessage = (message) => {
+    const messagesDiv = document.querySelector('#messages');
+    messagesDiv.style.display = 'block';
+    const messageWithLinks = addDashboardLinks(message);
+    messagesDiv.innerHTML += `> ${messageWithLinks}<br>`;
+    console.log(`Debug: ${message}`);
+  };
 
-<html>
+  // Adds links for known Stripe objects to the Stripe dashboard.
+  const addDashboardLinks = (message) => {
+    const piDashboardBase = 'https://dashboard.stripe.com/test/payments';
+    return message.replace(
+            /(pi_(\S*)\b)/g,
+            `<a href="${piDashboardBase}/$1" target="_blank">$1</a>`
+    );
+  };
+
+  // js for card
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Load the publishable key from the server. The publishable key
+    // is set in your .env file.
+
+    const stripe = Stripe("pk_test_51Jv695K2Lmw2gpPZocxZoNag8Z6pv9JU8VoQv7knF7gLxDfWp6n6CnCboOOVnLCVyXn8XwVSnYi9W9jM03EXmcla00CtSt0JBk");
+
+    const elements = stripe.elements();
+    const card = elements.create('card',{
+      style: {
+        base: {
+          fontSize: '16px',
+          '::placeholder': {
+            color: '#71797E',
+          }
+        }
+      }
+    });
+    card.mount('#card-element');
+
+    // When the form is submitted...
+    const form = document.getElementById('payment-form');
+    let submitted = false;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Disable double submission of the form
+      if(submitted) { return; }
+      submitted = true;
+      form.querySelector('button').disabled = true;
+
+      // Make a call to the server to create a new
+      // payment intent and store its client_secret.
+      const {error: backendError, clientSecret} = await fetch(
+              '../create-payment-intent/',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  currency: 'usd',
+                  paymentMethodType: 'card',
+                }),
+              }
+      ).then((r) => r.json());
+
+      if (backendError) {
+        addMessage(backendError.message);
+
+        // reenable the form.
+        submitted = false;
+        form.querySelector('button').disabled = false;
+        return;
+      }
+
+      addMessage('Connected Account');
+      addMessage(`Client secret returned.`);
+
+      const nameInput = document.querySelector('#name');
+
+      // Confirm the card payment given the clientSecret
+      // from the payment intent that was just created on
+      // the server.
+      const {error: stripeError, paymentIntent} = await stripe.confirmCardPayment(
+              clientSecret,
+              {
+                payment_method: {
+                  card: card,
+                  billing_details: {
+                    name: nameInput.value,
+                  },
+                },
+              }
+      );
+
+      if (stripeError) {
+        addMessage(stripeError.message);
+
+        // reenable the form.
+        submitted = false;
+        form.querySelector('button').disabled = false;
+        return;
+      }
+
+      addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
+    });
+  });
+</script>
+
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Card</title>
-    <script>
-      // Helper for displaying status messages.
-      const addMessage = (message) => {
-        const messagesDiv = document.querySelector('#messages');
-        messagesDiv.style.display = 'block';
-        const messageWithLinks = addDashboardLinks(message);
-        messagesDiv.innerHTML += `> ${messageWithLinks}<br>`;
-        console.log(`Debug: ${message}`);
-      };
-
-      // Adds links for known Stripe objects to the Stripe dashboard.
-      const addDashboardLinks = (message) => {
-        const piDashboardBase = 'https://dashboard.stripe.com/test/payments';
-        return message.replace(
-          /(pi_(\S*)\b)/g,
-          `<a href="${piDashboardBase}/$1" target="_blank">$1</a>`
-        );
-      };
-
-
-      document.addEventListener('DOMContentLoaded', async () => {
-
-      const stripe = Stripe("pk_test_51Jv695K2Lmw2gpPZocxZoNag8Z6pv9JU8VoQv7knF7gLxDfWp6n6CnCboOOVnLCVyXn8XwVSnYi9W9jM03EXmcla00CtSt0JBk");
-
-      const elements = stripe.elements();
-      const card = elements.create('card',{
-        style: {
-          base: {
-            fontSize: '16px',
-            '::placeholder': {
-              color: '#71797E',
-            }
-          }
-        }
-      });
-      card.mount('#card-element')
-
-      // When the form is submitted...
-      const form = document.getElementById('payment-form');
-      let submitted = false;
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // Disable double submission of the form
-        if(submitted) { return; }
-        submitted = true;
-        form.querySelector('button').disabled = true;
-
-        // Make a call to the server to create a new
-        // payment intent and store its client_secret.
-        const {error: backendError, clientSecret} = await fetch(
-          '../create-payment-intent/',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              currency: 'usd',
-              paymentMethodType: 'card',
-            }),
-          }
-        ).then((r) => r.json());
-
-        if (backendError) {
-          addMessage(backendError.message);
-
-          // reenable the form.
-          submitted = false;
-          form.querySelector('button').disabled = false;
-          return;
-        }
-
-        addMessage(`Client secret returned.`);
-
-        const nameInput = document.querySelector('#name');
-
-        // Confirm the card payment given the clientSecret
-        // from the payment intent that was just created on
-        // the server.
-        const {error: stripeError, paymentIntent} = await stripe.confirmCardPayment(
-          clientSecret,
-          {
-            payment_method: {
-              card: card,
-              billing_details: {
-                name: nameInput.value,
-              },
-            },
-          }
-        );
-
-        if (stripeError) {
-          addMessage(stripeError.message);
-
-          // reenable the form.
-          submitted = false;
-          form.querySelector('button').disabled = false;
-          return;
-        }
-
-        addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
-      });
-    });
-    </script>
+    <title>Make Payment</title>
+    {{ data|json_script:"data" }}
   </head>
   {% url 'payment' as cancel %}
   {% url 'card_payment_success' as success %}
@@ -217,22 +220,20 @@
       <br>
       <br>
       <div style="text-align: center">
-        <h2>Pay Oustanding Balance</h2>
+        <h2>Pay Outstanding Balance</h2>
         <p>
           Enter Card Information Below
         </p>
       </div>
-
       <form id="payment-form">
         <div style="text-align: center;"><p>Outstanding Balance: $ {{ amount }}</p></div>
-        <label for="name">
-          Name
-        </label>
-        <input id="name" required />
+        <label for="name">Name</label>
+        <input id="name" value="{{ user.first_name }} {{ user.last_name }}" required />
+        <label for="email">Email</label>
+        <input type="email" id="email" value="{{ user.email }}" required />
 
-        <label for="card-element">
-          Card
-        </label>
+        <label for="card-element">Card</label>
+
         <div id="card-element">
           <!-- Elements will create input elements here -->
         </div>
@@ -247,8 +248,7 @@
 
       <p><a href="{{ cancel }}">Cancel</a></p>
       <p><a href="{{ success }}">Done</a></p>
-
     </main>
-      <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://js.stripe.com/v3/"></script>
   </body>
-
+</html>

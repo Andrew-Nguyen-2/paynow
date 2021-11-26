@@ -46,6 +46,15 @@ from accounts.views import (
     StripeIntentView,
 )
 
+from accounts.export import (
+    export_member_list_csv,
+    export_member_list_excel,
+    export_admin_history_csv,
+    export_admin_history_excel,
+    export_member_history_csv,
+    export_member_history_excel,
+)
+
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -89,6 +98,16 @@ urlpatterns = [
     # organization urls
     url(r'^invite/', include(invitation_backend().get_urls())),
     url(r'^organizations/', include('accounts.urls')),
+
+    # admin export urls
+    url(r'^export/members/csv/$', export_member_list_csv, name='export_members_csv'),
+    url(r'^export/members/xls/$', export_member_list_excel, name='export_members_excel'),
+    url(r'^export/history/csv/$', export_admin_history_csv, name='export_history_csv'),
+    url(r'^export/history/xls/$', export_admin_history_excel, name='export_history_excel'),
+
+    # member export urls
+    url(r'^export/member/history/csv/$', export_member_history_csv, name='export_member_history_csv'),
+    url(r'^export/member/history/xls/$', export_member_history_excel, name='export_member_history_excel'),
 
     path('admin/', admin.site.urls),
 ]

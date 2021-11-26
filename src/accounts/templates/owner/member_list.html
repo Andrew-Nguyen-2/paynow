@@ -2,6 +2,16 @@
 {% url 'send_invoice' as send_invoice_url %}
 {% block content %}
 
+<style>
+    .main-site {
+        padding-top: 0;
+        width: 95%;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+</style>
+
+<br>
 <div style="text-align: center">
     <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
     font-style: italic; color: #0d8dcb; font-weight: 900">
@@ -9,30 +19,29 @@
     </p>
 </div>
 
-<style>
-    .main-site {
-        padding-top: 5px;
-        width: 95%;
-        max-width: 1300px;
-        margin: 0 auto;
-    }
-</style>
-
 {% if members %}
 <div class="container">
     <div class="row">
         <div class="col text-center">
+            <h3>Total Members: {{ total_members }}</h3>
+            <br>
             <a href="../send_invoice/" class="btn btn-secondary">Send Invoice</a>
         </div>
     </div>
+    <div class="col text-right">
+        <p>Export List of Members</p>
+        <a href="{% url 'export_members_csv' %}" class="btn btn-secondary btn-sm">CSV</a>
+        <a href="{% url 'export_members_excel' %}" class="btn btn-secondary btn-sm">Excel</a>
+        <a>&emsp;&ensp;</a>
+    </div>
 </div>
-
     <div class="main-site">
         <table class="table table-striped table-bordered" style="margin-top: 50px">
             <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Username</th>
+                <th scope="col">Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Amount Owed</th>
                 <th scope="col">Amount Paid</th>
@@ -43,6 +52,7 @@
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
                     <td>{{ member.username }}</td>
+                    <td>{{ member.first_name }} {{ member.last_name }}</td>
                     <td>{{ member.email }}</td>
                     <td>{{ member.amount_owed }}</td>
                     <td>{{ member.amount_paid }}</td>
@@ -51,6 +61,15 @@
             </tbody>
         </table>
     </div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 {% else %}
     <div style="text-align: center">
         <h1>No Members in {{ organization }}</h1>

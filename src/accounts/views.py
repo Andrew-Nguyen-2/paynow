@@ -1,5 +1,4 @@
 import math
-
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import NewOrgForm, NewUserAdminForm, UserInviteForm, NewUserForm, SendInvoiceForm
@@ -12,7 +11,7 @@ from django.contrib.auth.tokens import default_token_generator
 from .models import Account, OrgUser, InvoiceHistory
 from django.contrib.auth.decorators import login_required
 import stripe
-import json
+from json import dumps
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -91,7 +90,9 @@ def account_footer_view(request):
 def member_list(request):
     user = request.user
     query_results = OrgUser.objects.exclude(username=user.username).filter(organization_name=user.organization_name)
-    return render(request, "owner/member_list.html", {'organization': user.organization_name, 'members': query_results})
+    return render(request, "owner/member_list.html",
+                  {'organization': user.organization_name,
+                   'members': query_results, 'total_members': query_results.count()})
 
 
 def member_payment_view(request):
@@ -106,23 +107,11 @@ def make_a_payment(request):
     return render(request, 'member/make_payment.html', {'amount': amount_owed})
 
 
-# def stripe_credit_debit(request):
-#     user = request.user
-#     query_results = OrgUser.objects.filter(organization_name=user.organization_name, is_owner=True)
-#     payment_intent = stripe.PaymentIntent.create(
-#         payment_method_types=['card'],
-#         amount=math.trunc(user.amount_owed*100),
-#         currency='usd',
-#         stripe_account=str(query_results[0].stripe_account_id),
-#         metadata={'integration_check': 'accept_a_payment'},
-#     )
-#     return render(request, 'member/card_payment.html',
-#                   {'client_secret': payment_intent['client_secret'],
-#                    'amount': user.amount_owed})
-
 def stripe_credit_debit(request):
     user = request.user
-    return render(request, 'member/card_payment.html', {'amount': user.amount_owed})
+    admin = OrgUser.objects.filter(organization_name=user.organization_name, is_owner=True)
+    acc_id = str(admin[0].stripe_account_id)
+    return render(request, 'member/card_payment.html', {'amount': user.amount_owed, 'data': acc_id})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -135,7 +124,7 @@ class StripeIntentView(View):
             intent = stripe.PaymentIntent.create(
                 amount=math.trunc(user.amount_owed * 100),
                 currency='usd',
-                stripe_account=acc_id,
+                # stripe_account=acc_id,
             )
             return JsonResponse({'clientSecret': intent['client_secret']})
         except Exception as e:
