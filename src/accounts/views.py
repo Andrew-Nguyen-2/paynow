@@ -1,7 +1,7 @@
 import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewOrgForm, NewUserAdminForm, UserInviteForm, NewUserForm, SendInvoiceForm
+from .forms import NewOrgForm, NewUserAdminForm, UserInviteForm, NewUserForm, SendInvoiceForm, CreateBudgetForm
 from django.template.loader import render_to_string
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, JsonResponse
@@ -58,6 +58,20 @@ def account_budget_view(request):
         return render(request, "owner/budget.html", {'organization': org})
     else:
         return render(request, "member/member_budget.html", {'organization': org})
+
+
+def set_budget_view(request):
+    user = request.user
+    org = Account.objects.get(name=user.organization_name)
+    if request.method == 'POST':
+        form = CreateBudgetForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, "owner/set_budget.html", {'organization': org, 'form': form})
+        else:
+            print("form not valid")
+    form = CreateBudgetForm()
+    return render(request, "owner/set_budget.html", {'organization': org, 'form': form})
 
 
 def account_history_view(request):

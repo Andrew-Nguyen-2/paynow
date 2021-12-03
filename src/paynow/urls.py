@@ -32,6 +32,7 @@ from pages.views import (
 from accounts.views import (
     account_home_view,
     account_budget_view,
+    set_budget_view,
     account_history_view,
     account_settings_view,
     account_footer_view,
@@ -69,6 +70,7 @@ urlpatterns = [
     # account urls
     path('accounts/', account_home_view, name='account_home'),
     path('accounts/budget/', account_budget_view, name='budget'),
+    path('accounts/set_budget/', set_budget_view, name='set_budget'),
     path('accounts/history/', account_history_view, name='account_history'),
     path('accounts/payment/', member_payment_view, name='payment'),
     path('accounts/settings/', account_settings_view, name='account_settings'),

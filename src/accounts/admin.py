@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from organizations.models import Organization, OrganizationUser, OrganizationOwner
 from .forms import AccountUserForm
-from .models import Account, AccountUser, InvoiceHistory, OrgUser
+from .models import Account, AccountUser, InvoiceHistory, OrgUser, Budget
 
 
 class AccountUserAdmin(admin.ModelAdmin):
@@ -42,6 +42,12 @@ class InvoiceHistoryAdmin(admin.ModelAdmin):
     readonly_fields = ('username', 'organization_name', 'description', 'date_sent', 'invoice_amount')
 
 
+class BudgetAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Organization Information', {'fields': ['organization_name', 'categories']})
+    ]
+
+
 admin.site.unregister(Organization)
 admin.site.unregister(OrganizationUser)
 admin.site.unregister(OrganizationOwner)
@@ -50,3 +56,4 @@ admin.site.register(User)
 admin.site.register(Account, AccountAdmin)
 admin.site.register(AccountUser, AccountUserAdmin)
 admin.site.register(InvoiceHistory, InvoiceHistoryAdmin)
+admin.site.register(Budget, BudgetAdmin)

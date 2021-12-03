@@ -45,6 +45,23 @@ class InvoiceHistory(models.Model):
         verbose_name = "Invoice History"
 
 
+class Budget(models.Model):
+    organization_name = models.CharField(max_length=75, default="NO ORG")
+    categories = models.CharField(max_length=150, default="NO CATEGORIES")
+
+    class Meta:
+        verbose_name = "Budget"
+
+
+class Category(models.Model):
+    title = models.CharField(max_length=25)
+    amount = models.DecimalField(verbose_name='Amount', max_digits=8, decimal_places=2)
+    organization = models.ForeignKey(Budget, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        verbose_name = "Category"
+
+
 class AccountUser(AbstractOrganizationUser):
     pass
 
