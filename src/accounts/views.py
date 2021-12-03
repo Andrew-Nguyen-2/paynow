@@ -1,17 +1,19 @@
 import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import NewOrgForm, NewUserAdminForm, UserInviteForm, NewUserForm, SendInvoiceForm, CreateBudgetForm
+from .forms import (
+    NewOrgForm, NewUserAdminForm, UserInviteForm,
+    NewUserForm, SendInvoiceForm, CreateBudgetForm, AddCategoryForm
+)
 from django.template.loader import render_to_string
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, JsonResponse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from .models import Account, OrgUser, InvoiceHistory
+from .models import Account, OrgUser, InvoiceHistory, Budget, Category
 from django.contrib.auth.decorators import login_required
 import stripe
-from json import dumps
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -60,18 +62,42 @@ def account_budget_view(request):
         return render(request, "member/member_budget.html", {'organization': org})
 
 
-def set_budget_view(request):
+def new_budget_view(request):
     user = request.user
     org = Account.objects.get(name=user.organization_name)
     if request.method == 'POST':
         form = CreateBudgetForm(request.POST)
         if form.is_valid():
-            form.save()
-            return render(request, "owner/set_budget.html", {'organization': org, 'form': form})
-        else:
-            print("form not valid")
+            title = form.cleaned_data['title']
+            budget = Budget(title=title, organization_name=org)
+            budget.save()
+            return render(request, "owner/create_budget.html", {'organization': org, 'budget': budget})
     form = CreateBudgetForm()
     return render(request, "owner/set_budget.html", {'organization': org, 'form': form})
+
+
+def new_category_view(request):
+    user = request.user
+    # org = Account.objects.get(name=user.organization_name)
+    # budget = Budget.objects.get(organization_name=user.organization_name)
+    if request.method == 'POST':
+        form = AddCategoryForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            amount = form.cleaned_data['amount']
+            budget = form.cleaned_data['budget']
+            category = Category(title=title, amount=amount, budget=budget)
+            category.save()
+            # return render(request, "owner/add_category.html", {'form': form})
+            return redirect("../create_budget/")
+    form = AddCategoryForm()
+    return render(request, "owner/add_category.html", {'form': form})
+
+
+def edit_budget_view(request):
+    user = request.user
+    org = Account.objects.get(name=user.organization_name)
+    return render(request, "owner/edit_budget.html", {'organization': org})
 
 
 def account_history_view(request):

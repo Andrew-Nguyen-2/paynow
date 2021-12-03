@@ -32,7 +32,9 @@ from pages.views import (
 from accounts.views import (
     account_home_view,
     account_budget_view,
-    set_budget_view,
+    new_budget_view,
+    edit_budget_view,
+    new_category_view,
     account_history_view,
     account_settings_view,
     account_footer_view,
@@ -69,8 +71,6 @@ urlpatterns = [
 
     # account urls
     path('accounts/', account_home_view, name='account_home'),
-    path('accounts/budget/', account_budget_view, name='budget'),
-    path('accounts/set_budget/', set_budget_view, name='set_budget'),
     path('accounts/history/', account_history_view, name='account_history'),
     path('accounts/payment/', member_payment_view, name='payment'),
     path('accounts/settings/', account_settings_view, name='account_settings'),
@@ -78,6 +78,12 @@ urlpatterns = [
     path('accounts/members_list/', member_list, name='member_list'),
     path('accounts/send_invoice/', send_invoice_view, name='send_invoice'),
     path('accounts/make_payment/', make_a_payment, name='make_payment'),
+
+    # account budget urls
+    path('accounts/budget/', account_budget_view, name='budget'),
+    path('accounts/create_budget/', new_budget_view, name='create_budget'),
+    path('accounts/edit_budget', edit_budget_view, name='edit_budget'),
+    path('accounts/add_category/', new_category_view, name='add_category'),
 
     # Stripe urls
     path('accounts/stripe_account_success/', stripe_success, name='stripe_account_success'),

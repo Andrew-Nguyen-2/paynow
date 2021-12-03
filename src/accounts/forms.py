@@ -1,5 +1,5 @@
 from django import forms
-from .models import Account, AccountUser, OrgUser, InvoiceHistory, Budget
+from .models import Account, AccountUser, OrgUser, InvoiceHistory, Budget, Category
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.sites.models import Site
@@ -145,20 +145,21 @@ class SendInvoiceForm(forms.Form):
 
 class CreateBudgetForm(forms.Form):
     title = forms.CharField(max_length=25)
-    amount = forms.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:
         model = Budget
-        fields = ('title', 'amount')
-        exclude = {'organization'}
+        fields = ('title',)
+        exclude = {'organization_name'}
 
-    def save(self, commit=True):
-        user = super(CreateBudgetForm, self).save(commit=False)
-        self.title = self.cleaned_data['title']
-        self.amount = self.cleaned_data['amount']
-        if commit:
-            user.save()
-        return user
+
+class AddCategoryForm(forms.Form):
+    title = forms.CharField(max_length=25)
+    amount = forms.DecimalField(max_digits=8, decimal_places=2)
+    budget = forms.CharField(max_length=25, label="Budget Title")
+
+    class Meta:
+        model = Category
+        fields = ('title', 'amount', 'budget')
 
 
 class UserInviteForm(forms.Form):

@@ -6,7 +6,7 @@
 <div style="text-align: center">
     <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
     font-style: italic; color: #0d8dcb; font-weight: 900">
-        Create New Budget
+        Add New Category
     </p>
 </div>
 <br>
@@ -20,13 +20,13 @@
 </div>
 <br>
 <div class="card text-white bg-secondary mb-3 text-center" style="width: 30rem; margin: auto">
-    <div class="card-header">New Budget</div>
+    <div class="card-header">New Category</div>
   <div class="card-body">
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <button style="background-color: #609ab6; color: white" class="btn btn-outline-info" type="submit">
-            Create New Budget
+            Add Category
         </button>
     </form>
   </div>

@@ -46,6 +46,7 @@ class InvoiceHistory(models.Model):
 
 
 class Budget(models.Model):
+    title = models.CharField(max_length=25, default="NO TITLE", unique=True)
     organization_name = models.CharField(max_length=75, default="NO ORG")
     categories = models.CharField(max_length=150, default="NO CATEGORIES")
 
@@ -54,9 +55,9 @@ class Budget(models.Model):
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=25)
+    title = models.CharField(max_length=25, unique=True)
     amount = models.DecimalField(verbose_name='Amount', max_digits=8, decimal_places=2)
-    organization = models.ForeignKey(Budget, on_delete=models.CASCADE, null=True)
+    budget = models.CharField(max_length=25, default="NO BUDGET")
 
     class Meta:
         verbose_name = "Category"
