@@ -2,7 +2,7 @@ import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import (
-    NewOrgForm, NewUserAdminForm, UserInviteForm,
+    NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm,
     NewUserForm, SendInvoiceForm, CreateBudgetForm, AddCategoryForm
 )
 from django.template.loader import render_to_string
@@ -71,15 +71,14 @@ def new_budget_view(request):
             title = form.cleaned_data['title']
             budget = Budget(title=title, organization_name=org)
             budget.save()
-            return render(request, "owner/create_budget.html", {'organization': org, 'budget': budget})
+            # return render(request, "owner/create_budget.html", {'organization': org, 'budget': budget})
+            return redirect("../budget/")
     form = CreateBudgetForm()
     return render(request, "owner/set_budget.html", {'organization': org, 'form': form})
 
 
 def new_category_view(request):
     user = request.user
-    # org = Account.objects.get(name=user.organization_name)
-    # budget = Budget.objects.get(organization_name=user.organization_name)
     if request.method == 'POST':
         form = AddCategoryForm(request.POST)
         if form.is_valid():
@@ -97,7 +96,39 @@ def new_category_view(request):
 def edit_budget_view(request):
     user = request.user
     org = Account.objects.get(name=user.organization_name)
-    return render(request, "owner/edit_budget.html", {'organization': org})
+    query_results = Budget.objects.filter(organization_name=user.organization_name)
+    choices = [(bud.title, str(bud.title)) for bud in query_results]
+    if request.method == 'POST':
+        form = EditBudgetForm(choices, request.POST)
+        if form.is_valid():
+            budget = form.cleaned_data['budget_list']
+            category = form.cleaned_data['category']
+            amount = form.cleaned_data['amount']
+            c = Category(title=category, amount=amount, budget=budget, organization_name=org)
+            c.save()
+            return redirect("../accounts/budget_list")
+        else:
+            messages.error(request, "Unsuccessfully Created Category")
+            return render(
+                request, 'owner/budget.html',
+                {'organization': user.organization_name, 'budgets': query_results, 'form': form}
+            )
+    form = EditBudgetForm(choices, request.POST)
+    return render(request, "owner/edit_budget.html", {'organization': org, 'budgets': query_results, 'form': form})
+
+
+def show_budget_view(request):
+    user = request.user
+    org = Account.objects.get(name=user.organization_name)
+    budgets = Budget.objects.filter(organization_name=user.organization_name)
+    categories = Category.objects.filter(organization_name=org)
+    amount = 0
+    for category in categories:
+        amount += category.amount
+    leftover = org.collected_amount - amount
+    return render(request, "owner/budget_list.html",
+                  {'budgets': budgets, 'organization': org, 'user': user,
+                   'categories': categories, 'leftover': leftover})
 
 
 def account_history_view(request):

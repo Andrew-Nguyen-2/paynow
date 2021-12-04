@@ -162,6 +162,23 @@ class AddCategoryForm(forms.Form):
         fields = ('title', 'amount', 'budget')
 
 
+class EditBudgetForm(forms.Form):
+
+    budget_list = forms.MultipleChoiceField(label=_("Budget List"))
+    category = forms.CharField(max_length=25)
+    amount = forms.DecimalField(max_digits=8, decimal_places=2)
+
+    def __init__(self, budget_choices=None, *args, **kwargs):
+        super(EditBudgetForm, self).__init__(*args, **kwargs)
+        if budget_choices is not None:
+            self.fields['budget_list'].choices = budget_choices
+
+    class Meta:
+        model = Budget
+        fields = ("budget_list", "category", "amount")
+
+
+
 class UserInviteForm(forms.Form):
     email = forms.EmailField(
         label=_("Email"),

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User, Group
 from organizations.models import Organization, OrganizationUser, OrganizationOwner
 from .forms import AccountUserForm
-from .models import Account, AccountUser, InvoiceHistory, OrgUser, Budget
+from .models import Account, AccountUser, InvoiceHistory, OrgUser, Budget, Category
 
 
 class AccountUserAdmin(admin.ModelAdmin):
@@ -44,7 +44,13 @@ class InvoiceHistoryAdmin(admin.ModelAdmin):
 
 class BudgetAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Organization Information', {'fields': ['organization_name', 'categories']})
+        ('Organization Information', {'fields': ['title', 'organization_name']})
+    ]
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Category Information', {'fields': ['title', 'amount', 'budget', 'organization_name']})
     ]
 
 
@@ -57,3 +63,4 @@ admin.site.register(Account, AccountAdmin)
 admin.site.register(AccountUser, AccountUserAdmin)
 admin.site.register(InvoiceHistory, InvoiceHistoryAdmin)
 admin.site.register(Budget, BudgetAdmin)
+admin.site.register(Category, CategoryAdmin)
