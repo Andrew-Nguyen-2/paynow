@@ -44,7 +44,7 @@
                     <td>
                         {% if categories %}
                             {% for category in categories %}
-                                {% if category.budget.2 == budget.title.0 %}
+                                {% if category.budget == budget.title %}
                                     {{ category.title }}: {{ category.amount | linebreaks }}
                                 {% endif %}
                             {% endfor %}
@@ -54,7 +54,9 @@
                     </td>
                     <td>
                         {% for key, value in leftover.items %}
-                            This is key {{key}}
+                            {% if key == budget.title %}
+                                {{ value }}
+                            {% endif %}
                         {% endfor %}
                     </td>
                 </tr>

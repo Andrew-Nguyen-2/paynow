@@ -106,12 +106,13 @@ def edit_budget_view(request):
             budget = form.cleaned_data['budget_list']
             category = form.cleaned_data['category']
             amount = form.cleaned_data['amount']
-            c = Category(title=category, amount=amount, budget=budget, organization_name=org)
-            b = get_object_or_404(Budget, title=budget)
-            b.total += amount
-            b.save()
-            c.save()
-            return redirect("../accounts/budget_list")
+            for bud in budget:
+                b = get_object_or_404(Budget, title=bud)
+                b.total += amount
+                b.save()
+                c = Category(title=category, amount=amount, budget=bud, organization_name=org)
+                c.save()
+            return redirect("../budget_list/")
         else:
             messages.error(request, "Unsuccessfully Created Category")
             return render(
@@ -127,12 +128,17 @@ def show_budget_view(request):
     org = Account.objects.get(name=user.organization_name)
     budgets = Budget.objects.filter(organization_name=user.organization_name)
     categories = Category.objects.filter(organization_name=org)
+    total_amount = {}
     leftover = {}
-    amount = {}
-    
+    for cat in categories:
+        total_amount[cat.budget] = 0
+    for cat in categories:
+        total_amount[cat.budget] += cat.amount
+    for key in total_amount:
+        leftover[key] = org.collected_amount - total_amount[key]
     return render(request, "owner/budget_list.html",
                   {'budgets': budgets, 'organization': org, 'user': user,
-                   'categories': categories, 'leftover': leftover})
+                   'categories': categories, 'total_amount': total_amount, 'leftover': leftover})
 
 
 def delete_budget_view(request):
@@ -145,12 +151,14 @@ def delete_budget_view(request):
         form = DeleteBudgetForm(choices, request.POST)
         if form.is_valid():
             selected_budgets = form.cleaned_data['budget_list']
-            for cat in categories:
-                if cat.title in selected_budgets:
-                    c = get_object_or_404(Category, title=cat)
-                    c.delete()
             for bud in selected_budgets:
                 b = get_object_or_404(Budget, title=bud)
+                for cat in categories:
+                    print("inside for cat")
+                    if cat.budget in selected_budgets:
+                        print("inside if cat.budget")
+                        c = get_object_or_404(Category, title=cat.title)
+                        c.delete()
                 b.delete()
             return redirect("../budget_list/")
     form = DeleteBudgetForm(choices, request.POST)

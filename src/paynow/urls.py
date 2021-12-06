@@ -86,7 +86,7 @@ urlpatterns = [
     # account budget urls
     path('accounts/budget/', account_budget_view, name='budget'),
     path('accounts/create_budget/', new_budget_view, name='create_budget'),
-    path('accounts/edit_budget', edit_budget_view, name='edit_budget'),
+    path('accounts/edit_budget/', edit_budget_view, name='edit_budget'),
     path('accounts/add_category/', new_category_view, name='add_category'),
     path('accounts/budget_list/', show_budget_view, name='budget_list'),
     path('accounts/delete_budget/', delete_budget_view, name='delete_budget'),

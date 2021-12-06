@@ -44,7 +44,7 @@ class InvoiceHistoryAdmin(admin.ModelAdmin):
 
 class BudgetAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Organization Information', {'fields': ['title', 'organization_name']})
+        ('Organization Information', {'fields': ['title', 'organization_name', 'total']})
     ]
 
 
