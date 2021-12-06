@@ -6,7 +6,6 @@ from django.contrib.sites.models import Site
 from organizations.backends import invitation_backend
 from organizations.backends.forms import UserRegistrationForm
 from django.conf import settings
-from django.utils import timezone
 
 
 class NewOrgForm(forms.ModelForm):
@@ -125,6 +124,18 @@ class RemoveMemberForm(forms.Form):
             self.fields['member_list'].choices = member_choices
 
 
+class DeleteBudgetForm(forms.Form):
+    budget_list = forms.MultipleChoiceField(
+        label=_("Budget List"),
+        help_text="Press and Hold command (mac) / Control (windows) to Select Multiple Budgets"
+    )
+
+    def __init__(self, budget_choices=None, *args, **kwargs):
+        super(DeleteBudgetForm, self).__init__(*args, **kwargs)
+        if budget_choices is not None:
+            self.fields['budget_list'].choices = budget_choices
+
+
 class SendInvoiceForm(forms.Form):
 
     member_list = forms.MultipleChoiceField(
@@ -162,7 +173,7 @@ class CreateBudgetForm(forms.Form):
     class Meta:
         model = Budget
         fields = ('title',)
-        exclude = {'organization_name'}
+        exclude = {'organization_name', 'total'}
 
 
 class AddCategoryForm(forms.Form):
@@ -189,6 +200,7 @@ class EditBudgetForm(forms.Form):
     class Meta:
         model = Budget
         fields = ("budget_list", "category", "amount")
+        exclude = ['total']
 
 
 

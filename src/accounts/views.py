@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import (
     NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm, RemoveMemberForm,
-    NewUserForm, SendInvoiceForm, CreateBudgetForm, AddCategoryForm
+    NewUserForm, SendInvoiceForm, CreateBudgetForm, AddCategoryForm, DeleteBudgetForm
 )
 from django.template.loader import render_to_string
 from django.core.mail import send_mail, BadHeaderError
@@ -90,7 +90,6 @@ def new_category_view(request):
             budget = form.cleaned_data['budget']
             category = Category(title=title, amount=amount, budget=budget)
             category.save()
-            # return render(request, "owner/add_category.html", {'form': form})
             return redirect("../create_budget/")
     form = AddCategoryForm()
     return render(request, "owner/add_category.html", {'form': form})
@@ -108,6 +107,9 @@ def edit_budget_view(request):
             category = form.cleaned_data['category']
             amount = form.cleaned_data['amount']
             c = Category(title=category, amount=amount, budget=budget, organization_name=org)
+            b = get_object_or_404(Budget, title=budget)
+            b.total += amount
+            b.save()
             c.save()
             return redirect("../accounts/budget_list")
         else:
@@ -125,13 +127,34 @@ def show_budget_view(request):
     org = Account.objects.get(name=user.organization_name)
     budgets = Budget.objects.filter(organization_name=user.organization_name)
     categories = Category.objects.filter(organization_name=org)
-    amount = 0
-    for category in categories:
-        amount += category.amount
-    leftover = org.collected_amount - amount
+    leftover = {}
+    amount = {}
+    
     return render(request, "owner/budget_list.html",
                   {'budgets': budgets, 'organization': org, 'user': user,
                    'categories': categories, 'leftover': leftover})
+
+
+def delete_budget_view(request):
+    user = request.user
+    org = Account.objects.get(name=user.organization_name)
+    budgets = Budget.objects.filter(organization_name=user.organization_name)
+    categories = Category.objects.filter(organization_name=org)
+    choices = [(bud.title, str(bud.title)) for bud in budgets]
+    if request.method == "POST":
+        form = DeleteBudgetForm(choices, request.POST)
+        if form.is_valid():
+            selected_budgets = form.cleaned_data['budget_list']
+            for cat in categories:
+                if cat.title in selected_budgets:
+                    c = get_object_or_404(Category, title=cat)
+                    c.delete()
+            for bud in selected_budgets:
+                b = get_object_or_404(Budget, title=bud)
+                b.delete()
+            return redirect("../budget_list/")
+    form = DeleteBudgetForm(choices, request.POST)
+    return render(request, "owner/delete_budget.html", {'form': form})
 
 
 def account_history_view(request):
@@ -213,12 +236,10 @@ class StripeIntentView(View):
     def post(self, request, *args, **kwargs):
         user = request.user
         admin = OrgUser.objects.filter(organization_name=user.organization_name, is_owner=True)
-        acc_id = str(admin[0].stripe_account_id)
         try:
             intent = stripe.PaymentIntent.create(
                 amount=math.trunc(user.amount_owed * 100),
                 currency='usd',
-                # stripe_account=acc_id,
             )
             return JsonResponse({'clientSecret': intent['client_secret']})
         except Exception as e:

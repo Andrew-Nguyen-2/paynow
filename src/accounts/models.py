@@ -48,6 +48,7 @@ class InvoiceHistory(models.Model):
 class Budget(models.Model):
     title = models.CharField(max_length=25, default="NO TITLE", unique=True)
     organization_name = models.CharField(max_length=75, default="NO ORG")
+    total = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
 
     class Meta:
         verbose_name = "Budget"

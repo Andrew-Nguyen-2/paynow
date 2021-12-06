@@ -22,6 +22,8 @@
 {% if user.is_owner %}
     <div class="row justify-content-center">
         <a href="{% url 'edit_budget' %}" class="btn btn-success">+ Add Category</a>
+        &emsp;
+        <a href="{% url 'delete_budget' %}" class="btn btn-secondary">Delete a Budget</a>
     </div>
 {% endif %}
 <div class="main-site">
@@ -42,13 +44,19 @@
                     <td>
                         {% if categories %}
                             {% for category in categories %}
-                                {{ category.title }}: {{ category.amount|linebreaks }}
+                                {% if category.budget.2 == budget.title.0 %}
+                                    {{ category.title }}: {{ category.amount | linebreaks }}
+                                {% endif %}
                             {% endfor %}
                         {% else %}
                             No Categories
                         {% endif %}
                     </td>
-                    <td>{{ leftover }}</td>
+                    <td>
+                        {% for key, value in leftover.items %}
+                            This is key {{key}}
+                        {% endfor %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
