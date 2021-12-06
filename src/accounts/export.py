@@ -100,11 +100,18 @@ def get_invoice_list(user, is_admin):
 
     new_history_list = []
 
-    for history in history_list:
-        history_date = str(history.date_sent)
-        date = history_date.split(" ")
-        tmp = [date[0], history.username, history.description, history.invoice_amount]
-        new_history_list.append(tmp)
+    if is_admin:
+        for history in history_list:
+            history_date = str(history.date_sent)
+            date = history_date.split(" ")
+            tmp = [date[0], history.username, history.description, history.invoice_amount]
+            new_history_list.append(tmp)
+    else:
+        for history in history_list:
+            history_date = str(history.date_sent)
+            date = history_date.split(" ")
+            tmp = [date[0], history.description, history.invoice_amount]
+            new_history_list.append(tmp)
 
     return new_history_list
 

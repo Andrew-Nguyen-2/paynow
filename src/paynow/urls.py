@@ -42,6 +42,7 @@ from accounts.views import (
     user_invite_register,
     member_payment_view,
     member_list,
+    remove_member_view,
     send_invoice_view,
     make_a_payment,
     stripe_success,
@@ -77,6 +78,7 @@ urlpatterns = [
     path('accounts/settings/', account_settings_view, name='account_settings'),
     path('accounts/about/', account_footer_view, name='account_about'),
     path('accounts/members_list/', member_list, name='member_list'),
+    path('accounts/remove_members/', remove_member_view, name='remove_member'),
     path('accounts/send_invoice/', send_invoice_view, name='send_invoice'),
     path('accounts/make_payment/', make_a_payment, name='make_payment'),
 

@@ -17,8 +17,6 @@ from paynow.forms import ContactForm, NewUserForm
 
 
 def home_view(request, *args, **kwargs):
-    print(args, kwargs)
-    print(request.user)
     return render(request, "home.html", {})
 
 

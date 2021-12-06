@@ -112,6 +112,19 @@ class NewUserForm(UserCreationForm):
         return user
 
 
+class RemoveMemberForm(forms.Form):
+
+    member_list = forms.MultipleChoiceField(
+        label=_("Member List"),
+        help_text="Press and Hold command (mac) / Control (windows) to Select Multiple Members"
+    )
+
+    def __init__(self, member_choices=None, *args, **kwargs):
+        super(RemoveMemberForm, self).__init__(*args, **kwargs)
+        if member_choices is not None:
+            self.fields['member_list'].choices = member_choices
+
+
 class SendInvoiceForm(forms.Form):
 
     member_list = forms.MultipleChoiceField(

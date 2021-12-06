@@ -28,6 +28,9 @@
             <a href="../send_invoice/" class="btn btn-secondary">Send Invoice</a>
         </div>
     </div>
+    <div>
+        <a href="{% url 'remove_member' %}" class="btn btn-secondary">Remove Member</a>
+    </div>
     <div class="col text-right">
         <p>Export List of Members</p>
         <a href="{% url 'export_members_csv' %}" class="btn btn-secondary btn-sm">CSV</a>

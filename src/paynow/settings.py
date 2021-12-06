@@ -135,7 +135,6 @@ SITE_ID = 1
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 REGISTRATION_BACKEND = 'organizations.backends.defaults.RegistrationBackend'
-# INVITATION_BACKEND = 'organizations.backends.defaults.InvitationBackend'
 INVITATION_BACKEND = 'accounts.backends.CustomInvitations'
 
 EMAIL_USE_TLS = True
@@ -145,7 +144,6 @@ EMAIL_HOST_PASSWORD = 'MANGO12345!'
 EMAIL_PORT = 587
 
 ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
-# AUTH_USER_MODEL = 'auth.User'
 AUTH_USER_MODEL = 'accounts.OrgUser'
 
 # Stripe

@@ -2,7 +2,7 @@ import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import (
-    NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm,
+    NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm, RemoveMemberForm,
     NewUserForm, SendInvoiceForm, CreateBudgetForm, AddCategoryForm
 )
 from django.template.loader import render_to_string
@@ -56,10 +56,13 @@ def stripe_success(request):
 def account_budget_view(request):
     user = request.user
     org = Account.objects.get(name=user.organization_name)
+    expected_collected_amount = org.expected_amount - org.collected_amount
     if user.is_owner:
-        return render(request, "owner/budget.html", {'organization': org})
+        return render(request, "owner/budget.html",
+                      {'organization': org, 'expected_collected_amount': expected_collected_amount})
     else:
-        return render(request, "member/member_budget.html", {'organization': org})
+        return render(request, "member/member_budget.html",
+                      {'organization': org, 'expected_collected_amount': expected_collected_amount})
 
 
 def new_budget_view(request):
@@ -164,6 +167,26 @@ def member_list(request):
     return render(request, "owner/member_list.html",
                   {'organization': user.organization_name,
                    'members': query_results, 'total_members': query_results.count()})
+
+
+def remove_member_view(request):
+    user = request.user
+    org = Account.objects.get(name=user.organization_name)
+    members = OrgUser.objects.exclude(username=user.username).filter(organization_name=user.organization_name)
+    choices = [(mem.username, str(mem.username)) for mem in members]
+    if request.method == "POST":
+        form = RemoveMemberForm(choices, request.POST)
+        if form.is_valid():
+            selected_members = form.cleaned_data['member_list']
+            for memb in selected_members:
+                u = get_object_or_404(OrgUser, username=memb)
+                if u.amount_owed > 0:
+                    org.expected_amount = org.expected_amount - u.amount_owed
+                    org.save()
+                u.delete()
+            return redirect("../members_list/")
+    form = RemoveMemberForm(choices, request.POST)
+    return render(request, "owner/remove_member.html", {'members': members, 'form': form})
 
 
 def member_payment_view(request):

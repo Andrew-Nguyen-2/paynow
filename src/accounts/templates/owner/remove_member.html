@@ -1,0 +1,22 @@
+{% extends 'admin_base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div style="text-align: center" xmlns="http://www.w3.org/1999/html">
+    <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
+    font-style: italic; color: #0d8dcb; font-weight: 900">
+        Remove Members
+    </p>
+</div>
+<div style="max-width: 950px; margin: 0 auto">
+    <form method="post">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <input type="submit" class="btn btn-danger" value="Remove Member">
+        <a href="{% url 'member_list' %}" class="btn btn-info ml-2">Cancel</a>
+    </form>
+</div>
+<br>
+<br>
+<br>
+{% endblock %}
