@@ -39,6 +39,8 @@ from accounts.views import (
     new_category_view,
     account_history_view,
     account_settings_view,
+    update_password_view,
+    update_password_success,
     account_footer_view,
     user_invite_register,
     member_payment_view,
@@ -82,6 +84,10 @@ urlpatterns = [
     path('accounts/remove_members/', remove_member_view, name='remove_member'),
     path('accounts/send_invoice/', send_invoice_view, name='send_invoice'),
     path('accounts/make_payment/', make_a_payment, name='make_payment'),
+
+    # account update urls
+    path('accounts/update_password', update_password_view, name='update_password'),
+    path('accounts/update_password_success/', update_password_success, name='update_password_success'),
 
     # account budget urls
     path('accounts/budget/', account_budget_view, name='budget'),

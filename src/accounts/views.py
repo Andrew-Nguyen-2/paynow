@@ -2,7 +2,7 @@ import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import (
-    NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm, RemoveMemberForm,
+    NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm, RemoveMemberForm, UpdatePasswordForm,
     NewUserForm, SendInvoiceForm, CreateBudgetForm, AddCategoryForm, DeleteBudgetForm
 )
 from django.template.loader import render_to_string
@@ -11,6 +11,8 @@ from django.http import HttpResponse, JsonResponse
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from .models import Account, OrgUser, InvoiceHistory, Budget, Category
 from django.contrib.auth.decorators import login_required
 import stripe
@@ -182,6 +184,21 @@ def account_settings_view(request):
         return render(request, "owner/settings.html", {})
     else:
         return render(request, "member/member_settings.html", {})
+
+
+def update_password_view(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            return render(request, "owner/change_password_success.html", {})
+    form = PasswordChangeForm(request.user)
+    return render(request, "owner/change_password.html", {'form': form})
+
+
+def update_password_success(request):
+    return render(request, "owner/change_password_success.html", {})
 
 
 def account_footer_view(request):

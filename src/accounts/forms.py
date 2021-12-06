@@ -111,6 +111,27 @@ class NewUserForm(UserCreationForm):
         return user
 
 
+class UpdatePasswordForm(forms.Form):
+
+    old_password = forms.CharField(max_length=128)
+    password1 = forms.CharField(max_length=128)
+    password2 = forms.CharField(max_length=128)
+
+    class Meta:
+        model = OrgUser
+        fields = {"old_password", "password1", "password2"}
+        exclude = [
+            'organization_id', 'organization_name', 'is_owner',
+            'is_member', 'amount_owed', 'amount_paid', 'has_stripe_account'
+        ]
+
+    def save(self, commit=True):
+        user = super(UpdatePasswordForm, self).save(commit=False)
+        if commit:
+            user.save()
+        return user
+
+
 class RemoveMemberForm(forms.Form):
 
     member_list = forms.MultipleChoiceField(
