@@ -111,25 +111,21 @@ class NewUserForm(UserCreationForm):
         return user
 
 
-class UpdatePasswordForm(forms.Form):
-
-    old_password = forms.CharField(max_length=128)
-    password1 = forms.CharField(max_length=128)
-    password2 = forms.CharField(max_length=128)
+class UpdateUsernameForm(forms.Form):
+    new_username = forms.CharField(
+        strip=True,
+        error_messages={'required': "Required."},
+        widget=forms.TextInput(attrs={'placeholder': 'Enter a Username'})
+    )
 
     class Meta:
         model = OrgUser
-        fields = {"old_password", "password1", "password2"}
+        fields = ("new_username",)
         exclude = [
-            'organization_id', 'organization_name', 'is_owner',
-            'is_member', 'amount_owed', 'amount_paid', 'has_stripe_account'
+            'organization_id', 'organization_name',
+            'is_owner', 'is_member', 'amount_owed', 'amount_paid',
+            'has_stripe_account', 'stripe_account_id'
         ]
-
-    def save(self, commit=True):
-        user = super(UpdatePasswordForm, self).save(commit=False)
-        if commit:
-            user.save()
-        return user
 
 
 class RemoveMemberForm(forms.Form):

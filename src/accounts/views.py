@@ -2,7 +2,7 @@ import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import (
-    NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm, RemoveMemberForm, UpdatePasswordForm,
+    NewOrgForm, NewUserAdminForm, UserInviteForm, EditBudgetForm, RemoveMemberForm, UpdateUsernameForm,
     NewUserForm, SendInvoiceForm, CreateBudgetForm, AddCategoryForm, DeleteBudgetForm
 )
 from django.template.loader import render_to_string
@@ -199,6 +199,24 @@ def update_password_view(request):
 
 def update_password_success(request):
     return render(request, "owner/change_password_success.html", {})
+
+
+def update_username_view(request):
+    user = request.user
+    if request.method == "POST":
+        form = UpdateUsernameForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['new_username']
+            user.username = name
+            user.save()
+            update_session_auth_hash(request, user)
+            return redirect("../accounts/update_username_success/")
+    form = UpdateUsernameForm()
+    return render(request, "owner/change_username.html", {'form': form})
+
+
+def update_username_success(request):
+    return render(request, "owner/change_username_success.html", {})
 
 
 def account_footer_view(request):
