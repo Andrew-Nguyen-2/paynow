@@ -1,14 +1,20 @@
 {% extends 'member_base.html' %}
-{% load crispy_forms_tags %}
 {% block content %}
-<div style="margin: 25px 625px; width: 100%">
+<br>
+<div style="text-align: center">
     <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
     font-style: italic; color: #0d8dcb; font-weight: 900">
         Settings
     </p>
 </div>
-<div style="width: 50%; margin: 10px 400px">
-    <h5>Fill in Text</h5>
+<br>
+<br>
+<br>
+<br>
+<div style="text-align: center">
+    <a href="{% url 'update_username' %}" class="btn btn-secondary">Change Username</a>
+    &emsp;
+    <a href="{% url 'update_password' %}" class="btn btn-secondary">Change Password</a>
 </div>
 {% endblock %}
 

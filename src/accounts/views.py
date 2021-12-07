@@ -187,6 +187,7 @@ def account_settings_view(request):
 
 
 def update_password_view(request):
+    log = request.user
     if request.method == "POST":
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
@@ -194,11 +195,18 @@ def update_password_view(request):
             update_session_auth_hash(request, user)
             return render(request, "owner/change_password_success.html", {})
     form = PasswordChangeForm(request.user)
-    return render(request, "owner/change_password.html", {'form': form})
+    if log.is_owner:
+        return render(request, "owner/change_password.html", {'form': form})
+    else:
+        return render(request, "member/change_password.html", {'form': form})
 
 
 def update_password_success(request):
-    return render(request, "owner/change_password_success.html", {})
+    user = request.user
+    if user.is_owner:
+        return render(request, "owner/change_password_success.html", {})
+    else:
+        return render(request, "member/change_password_success.html", {})
 
 
 def update_username_view(request):
@@ -212,11 +220,18 @@ def update_username_view(request):
             update_session_auth_hash(request, user)
             return redirect("../accounts/update_username_success/")
     form = UpdateUsernameForm()
-    return render(request, "owner/change_username.html", {'form': form})
+    if user.is_owner:
+        return render(request, "owner/change_username.html", {'form': form})
+    else:
+        return render(request, "member/change_username.html", {'form': form})
 
 
 def update_username_success(request):
-    return render(request, "owner/change_username_success.html", {})
+    user = request.user
+    if user.is_owner:
+        return render(request, "owner/change_username_success.html", {})
+    else:
+        return render(request, "member/change_username_success.html", {})
 
 
 def account_footer_view(request):

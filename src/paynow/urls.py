@@ -42,7 +42,7 @@ from accounts.views import (
     update_password_view,
     update_password_success,
     update_username_view,
-    update_password_success,
+    update_username_success,
     account_footer_view,
     user_invite_register,
     member_payment_view,
@@ -91,7 +91,7 @@ urlpatterns = [
     path('accounts/update_password', update_password_view, name='update_password'),
     path('accounts/update_password_success/', update_password_success, name='update_password_success'),
     path('accounts/update_username', update_username_view, name='update_username'),
-    path('accounts/update_username_success/', update_password_success, name='update_username_success'),
+    path('accounts/update_username_success/', update_username_success, name='update_username_success'),
 
     # account budget urls
     path('accounts/budget/', account_budget_view, name='budget'),
