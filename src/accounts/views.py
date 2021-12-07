@@ -138,9 +138,14 @@ def show_budget_view(request):
         total_amount[cat.budget] += cat.amount
     for key in total_amount:
         leftover[key] = org.collected_amount - total_amount[key]
-    return render(request, "owner/budget_list.html",
-                  {'budgets': budgets, 'organization': org, 'user': user,
-                   'categories': categories, 'total_amount': total_amount, 'leftover': leftover})
+    if user.is_owner:
+        return render(request, "owner/budget_list.html",
+                      {'budgets': budgets, 'organization': org, 'user': user,
+                       'categories': categories, 'total_amount': total_amount, 'leftover': leftover})
+    else:
+        return render(request, "member/member_budget_list.html",
+                      {'budgets': budgets, 'organization': org, 'user': user,
+                       'categories': categories, 'total_amount': total_amount, 'leftover': leftover})
 
 
 def delete_budget_view(request):

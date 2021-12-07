@@ -1,0 +1,85 @@
+{% extends 'member_base.html' %}
+
+{% block content %}
+
+<style>
+    .main-site {
+        padding-top: 0;
+        width: 95%;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+</style>
+
+<br>
+<br>
+<div style="text-align: center">
+    <p style="font-family: 'Microsoft Sans Serif',serif; font-size: 50px;
+    font-style: italic; color: #0d8dcb; font-weight: 900">
+        List of Budgets
+    </p>
+</div>
+<br>
+<div class="row justify-content-center">
+    <div>
+        <h5>
+            Expected Amount: ${{ organization.expected_amount }}&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+            &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Collected Amount: ${{ organization.collected_amount }}
+        </h5>
+    </div>
+</div>
+<br>
+{% if user.is_owner %}
+    <div class="row justify-content-center">
+        <a href="{% url 'edit_budget' %}" class="btn btn-success">+ Add Category</a>
+        &emsp;
+        <a href="{% url 'delete_budget' %}" class="btn btn-secondary">Delete a Budget</a>
+    </div>
+{% endif %}
+<div class="main-site">
+        <table class="table table-striped table-bordered" style="margin-top: 50px">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Budget Title</th>
+                <th scope="col">Categories & Amount</th>
+                <th scope="col">Leftover in Budget</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for budget in budgets %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ budget.title }}</td>
+                    <td>
+                        {% if categories %}
+                            {% for category in categories %}
+                                {% if category.budget == budget.title %}
+                                    {{ category.title }}: {{ category.amount | linebreaks }}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            No Categories
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for key, value in leftover.items %}
+                            {% if key == budget.title %}
+                                {{ value }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+{% endblock %}
+

@@ -99,6 +99,7 @@ urlpatterns = [
     path('accounts/edit_budget/', edit_budget_view, name='edit_budget'),
     path('accounts/add_category/', new_category_view, name='add_category'),
     path('accounts/budget_list/', show_budget_view, name='budget_list'),
+    path('accounts/member_budget_list/', show_budget_view, name='member_budget_list'),
     path('accounts/delete_budget/', delete_budget_view, name='delete_budget'),
 
     # Stripe urls

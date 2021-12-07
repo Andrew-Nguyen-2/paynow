@@ -172,8 +172,8 @@
         return;
       }
 
-      addMessage('Connected Account');
-      addMessage(`Client secret returned.`);
+      // addMessage('Connected Account');
+      // addMessage(`Client secret returned.`);
 
       const nameInput = document.querySelector('#name');
 
@@ -201,7 +201,8 @@
         return;
       }
 
-      addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
+      // addMessage(`Payment ${paymentIntent.status}: ${paymentIntent.id}`);
+      addMessage(`Payment Success!`);
     });
   });
 </script>
